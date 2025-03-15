@@ -1,0 +1,60 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+set.seed(20220106)
+library(SpatialPCA)
+library(ggplot2)
+getwd()
+```
+
+```{r}
+load("../raw_data/breast_tumor/Tumor_data.RData") 
+print(dim(rawcount)) # The count matrix
+print(dim(location)) # The location matrix
+```
+
+
+```{r}
+# location matrix: n x 2, count matrix: g x n.
+# here n is spot number, g is gene number.
+# here the column names of sp_count and rownames of location should be matched
+ST = CreateSpatialPCAObject(counts=rawcount, location=location, project = "SpatialPCA",gene.type="spatial",sparkversion="sparkx", gene.number=3000,customGenelist=NULL,min.loctions = 20, min.features=20)
+```
+
+```{r}
+saveRDS(ST@normalized_expr, '../pro_data/breast_tumor/tumor_data.rds')
+saveRDS(location, '../pro_data/breast_tumor/tumor_location.rds')
+```
+
+```{r}
+ST = SpatialPCA_buildKernel(ST, kerneltype="gaussian", bandwidthtype="SJ")
+```
+
+```{r}
+ST = SpatialPCA_EstimateLoading(ST,fast=FALSE,SpatialPCnum=20)
+```
+
+```{r}
+ST = SpatialPCA_SpatialPCs(ST, fast=FALSE)
+```
+
+```{r}
+clusterlabel= walktrap_clustering(7, ST@SpatialPCs,round(sqrt(dim(ST@location)[1])))
+clusterlabel_refine=refine_cluster_10x(clusterlabel,ST@location,shape="square")
+saveRDS(clusterlabel_refine, 'spa_PCA_r/env_rds/breast_tumor_r_cluster.rds')
+```
+
+```{r}
+# set color
+cbp_spatialpca = c(  "mediumaquamarine", "chocolate1","dodgerblue",  "#F0E442","palegreen4","lightblue2","plum1")
+# visualize the cluster
+spapca_img <- plot_cluster(legend="right",location=ST@location,clusterlabel_refine,pointsize=5,text_size=20 ,title_in=paste0("SpatialPCA"),color_in=cbp_spatialpca)
+spapca_img
+ggsave(spapca_img, filename = "../fig/breast_tumor_spapca.svg", width = 10, height = 6, units = "in", dpi = 300)
+```
+
+
+

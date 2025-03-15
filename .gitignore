@@ -1,0 +1,10 @@
+.DS_Store
+pro_data/*
+raw_data/*
+spa_PCA_r/env_rds/*
+spaPCA_py/env_py/*
+
+!pro_data/.gitkeep
+!raw_data/.gitkeep
+!spa_PCA_r/env_rds/.gitkeep
+!spaPCA_py/env_py.gitkeep
