@@ -1,3 +1,9 @@
+This is a Python implement for SpatialPCA Spatially aware dimension reduction for spatial transcriptomics:
+
+- Authors: Lulu Shang and Xiang Zhou
+- Original Implementation: https://github.com/shangll123/SpatialPCA?tab=readme-ov-file
+- Paper: https://www.nature.com/articles/s41467-022-34879-1#Sec31
+
 ## Setup
 
 - Pre-requirement for Python
